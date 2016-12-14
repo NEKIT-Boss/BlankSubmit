@@ -1,33 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+using Prism.Unity;
 using Xamarin.Forms;
 
 namespace BlankSubmit
 {
-    public class App : Application
+    public class App : PrismApplication
     {
-        public App()
+        public App(IPlatformInitializer initializer = null): base(initializer){ }
+
+        protected override void OnInitialized()
         {
-            // The root page of your application
-            MainPage = new Shell();
+            NavigationService.NavigateAsync($"NavigationPage/{NavigationKeys.Submit}");
         }
 
-        protected override void OnStart()
+        protected override void RegisterTypes()
         {
-            // Handle when your app starts
+            Container.RegisterTypeForNavigation<NavigationPage>();
+            Container.RegisterTypeForNavigation<SubmitView, SubmitViewModel>(NavigationKeys.Submit);
         }
+    }
 
-        protected override void OnSleep()
-        {
-            // Handle when your app sleeps
-        }
-
-        protected override void OnResume()
-        {
-            // Handle when your app resumes
-        }
+    public static class NavigationKeys
+    {
+        public const string Root = "Root";
+        public const string Submit = "Submit";
     }
 }

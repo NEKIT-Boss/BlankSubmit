@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:blankSubmit="clr-namespace:BlankSubmit;assembly=BlankSubmit"
              xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
-             xmlns:behaviors="clr-namespace:Behaviors;assembly=Behaviors"
+             xmlns:mvvm="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              x:Class="BlankSubmit.SubmitView">
   <ContentPage.Resources>
     <ResourceDictionary>
@@ -18,23 +18,6 @@
       </Style>
     </ResourceDictionary>
   </ContentPage.Resources>
-    
-  <ContentPage.BindingContext>
-    <blankSubmit:SubmitViewModel />
-  </ContentPage.BindingContext>
-  
-  <ContentPage.Behaviors>
-    <behaviors:EventHandlerBehavior EventName="Appearing">
-      <behaviors:InvokeCommandAction>
-        <behaviors:InvokeCommandAction/>
-      </behaviors:InvokeCommandAction>
-    </behaviors:EventHandlerBehavior>
-    <!--<behaviors:EventHandlerBehavior EventName="Appearing">
-      <behaviors:EventHandlerBehavior.Actions>
-        <behaviors:InvokeCommandAction Command="{Binding LoadCountriesCommand}"/>
-      </behaviors:EventHandlerBehavior.Actions>
-    </behaviors:EventHandlerBehavior>-->
-  </ContentPage.Behaviors>
   
   <StackLayout Margin="15, 10, 15, 0" Spacing="10" HorizontalOptions="FillAndExpand">
     
@@ -43,19 +26,47 @@
     <controls:ExtendedEntry Text="{Binding Name}" Placeholder="Имя"/>
     <controls:ExtendedEntry Text="{Binding Surname}" Placeholder="Фамилия"/>
     <controls:AutoCompleteView Text="{Binding CountryName, Mode=TwoWay}" Placeholder="Название страны" ShowSearchButton="False"
-                               Suggestions="{Binding Countries, Mode=OneWay}" SuggestionBackgroundColor="#EBEBEB">
+                               Suggestions="{Binding AvailableCountries.Result, Mode=OneWay}" SelectedCommand="{Binding CountrySelectedCommand}"
+                               SuggestionsHeightRequest="300">
       <controls:AutoCompleteView.SuggestionItemDataTemplate>
         <DataTemplate>
-          <Label Text="{Binding Name}"></Label>
+          <ViewCell Height="60">
+            <Label Text="{Binding Name}" FontSize="12" VerticalOptions="Center" HorizontalOptions="Start"
+                   Margin="10, 0, 0, 0"/>
+          </ViewCell>
         </DataTemplate>
       </controls:AutoCompleteView.SuggestionItemDataTemplate>
     
     </controls:AutoCompleteView>
-    <controls:AutoCompleteView Text="{Binding CityName}" Placeholder="Название города" ShowSearchButton="False"/> 
-    <controls:AutoCompleteView Text="{Binding UniversityName}" Placeholder="Название университета" ShowSearchButton="False"/>
+    
+    <controls:AutoCompleteView Text="{Binding CityName}" Placeholder="Название города" ShowSearchButton="False"
+                               Suggestions="{Binding AvailableCities.Result, Mode=OneWay}"
+                               SuggestionsHeightRequest="300" SelectedCommand="{Binding CitySelectedCommand}">
+      <controls:AutoCompleteView.SuggestionItemDataTemplate>
+        <DataTemplate>
+          <ViewCell Height="60">
+            <Label Text="{Binding Name}" FontSize="12" VerticalOptions="Center" HorizontalOptions="Start"
+                   Margin="10, 0, 0, 0"/>
+          </ViewCell>
+        </DataTemplate>
+      </controls:AutoCompleteView.SuggestionItemDataTemplate>
+    </controls:AutoCompleteView>
+    
+    <controls:AutoCompleteView Text="{Binding UniversityName}" Placeholder="Название университета" ShowSearchButton="False"
+                               Suggestions="{Binding AvailableUniversities.Result, Mode=OneWay}"
+                               SuggestionsHeightRequest="300">
+    <controls:AutoCompleteView.SuggestionItemDataTemplate>
+        <DataTemplate>
+          <ViewCell Height="60">
+            <Label Text="{Binding Name}" FontSize="12" VerticalOptions="Center" HorizontalOptions="Start"
+                   Margin="10, 0, 0, 0"/>
+          </ViewCell>
+        </DataTemplate>
+      </controls:AutoCompleteView.SuggestionItemDataTemplate>
+    </controls:AutoCompleteView>
   
     <Button Text="Заполнить бланк" Command="{Binding SubmitCommand}" BackgroundColor="Silver"
-            HorizontalOptions="Center" BorderRadius="14" HeightRequest="65"/>
+            HorizontalOptions="FillAndExpand" BorderRadius="14" HeightRequest="65" Margin="20, 15, 20, 10"/>
   </StackLayout>
   
 </ContentPage>

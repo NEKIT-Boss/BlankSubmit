@@ -9,6 +9,6 @@ namespace VkAPI.Countries
         public int Count { get; set; }
 
         [JsonProperty("items")]
-        public IList<Country> Countries { get; set; }
+        public List<Country> Countries { get; set; }
     }
 }

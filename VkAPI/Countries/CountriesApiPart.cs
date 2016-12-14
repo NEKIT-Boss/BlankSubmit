@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -10,20 +11,23 @@ namespace VkAPI
 {
     public static partial class VkApi
     {
-        private static IList<Country> _countriesCache;
+        private static List<Country> _countriesCache;
 
-        public static async Task<IList<Country>> GetAllCountriesAsync()
+        public static async Task<List<Country>> GetAllCountriesAsync()
         {
             if (_countriesCache != null) return _countriesCache;
 
             const string countriesMethod = "getCountries";
             const string needAllParam = "need_all=1";
+            const string countParam = "count=1000";
 
             try
             {
                 using (var client = new HttpClient())
                 {
-                    var requestUri = new Uri(string.Format(VkDatabaseUrl, countriesMethod, needAllParam));
+                    var requestUri = new Uri(string.Format(VkDatabaseUrl, 
+                        countriesMethod, 
+                        string.Join("&", LangParam, VersionParam, needAllParam, countParam)));
                     var response = await client.GetAsync(requestUri);
                     response.EnsureSuccessStatusCode();
 
@@ -41,6 +45,7 @@ namespace VkAPI
             catch (Exception)
             {
                 // TODO
+                Debugger.Break();
                 return null;
             }
         }

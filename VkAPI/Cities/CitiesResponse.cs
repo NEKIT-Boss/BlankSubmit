@@ -9,7 +9,7 @@ namespace VkAPI.Cities
         public int Count { get; set; }
 
         [JsonProperty("items")]
-        public IList<City> Cities { get; set; }
+        public List<City> Cities { get; set; }
 
     }
 }

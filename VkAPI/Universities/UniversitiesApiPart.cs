@@ -12,7 +12,7 @@ namespace VkAPI
 {
     public static partial class VkApi
     {
-        public static async Task<IList<University>> SearchForUniversitiesAsync(int countryId, int cityId, string searchQuery)
+        public static async Task<List<University>> SearchForUniversitiesAsync(int countryId, int cityId, string searchQuery)
         {
             const string citiesMethod = "getUniversities";
 
@@ -24,9 +24,8 @@ namespace VkAPI
             {
                 using (var client = new HttpClient())
                 {
-                    var requestUri = new Uri(string.Format(VkDatabaseUrl,
-                        citiesMethod,
-                        string.Join(countryParam, cityParam, queryParam)));
+                    var requestUri = BuildDatabaseUri(citiesMethod,
+                        countryParam, cityParam, queryParam);
 
                     var response = await client.GetAsync(requestUri);
                     response.EnsureSuccessStatusCode();

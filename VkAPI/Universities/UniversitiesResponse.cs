@@ -9,7 +9,7 @@ namespace VkAPI.Universities
         public int Count { get; set; }
 
         [JsonProperty("items")]
-        public IList<University> Universities { get; set; }
+        public List<University> Universities { get; set; }
 
     }
 }
