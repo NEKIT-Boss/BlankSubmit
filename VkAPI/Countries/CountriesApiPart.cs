@@ -32,7 +32,7 @@ namespace VkAPI
                     _countriesCache = await Task.Run(() =>
                         JsonConvert.DeserializeObject<VkResponse<CountriesResponse>>(rawJson)
                             .Response
-                            .Countries);
+                            .Countries).ConfigureAwait(false);
 
                     return _countriesCache;
                 }

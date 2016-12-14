@@ -35,12 +35,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Cities\ApiPart.cs" />
+    <Compile Include="Cities\CitiesApiPart.cs" />
     <Compile Include="Cities\CitiesResponse.cs" />
     <Compile Include="Cities\City.cs" />
-    <Compile Include="Countries\ApiPart.cs" />
+    <Compile Include="Countries\CountriesApiPart.cs" />
     <Compile Include="Countries\CountriesResponse.cs" />
     <Compile Include="Countries\Country.cs" />
+    <Compile Include="Universities\UniversitiesApiPart.cs" />
+    <Compile Include="Universities\University.cs" />
+    <Compile Include="Universities\UniversitiesResponse.cs" />
     <Compile Include="VkAPI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VkResponse.cs" />
@@ -78,9 +81,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Universities\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.2.3.3.175\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.3.175\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
