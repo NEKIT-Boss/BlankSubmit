@@ -2,7 +2,7 @@
 <ContentView
   xmlns="http://xamarin.com/schemas/2014/forms"
   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-  x:Class="BlankSubmit.AutoCompleteBox">
+  x:Class="BlankSubmit.View.Controls.AutoCompleteBox">
   <ContentView.ControlTemplate>
     <ControlTemplate>
       <StackLayout Spacing="10">
@@ -15,7 +15,7 @@
         <ListView ItemsSource="{TemplateBinding Suggestions}"
                   HeightRequest="{TemplateBinding SuggestionsHeightRequest}"
                   SelectedItem="{TemplateBinding SelectedItem}"
-                  ItemTemplate="{TemplateBinding ItemTemplate}"
+                  ItemTemplate="{TemplateBinding SuggestionTemplate}"
                   IsVisible="{TemplateBinding IsSuggestionsListOpen}" ItemSelected="ListView_OnItemSelected"/>
     
       </StackLayout>

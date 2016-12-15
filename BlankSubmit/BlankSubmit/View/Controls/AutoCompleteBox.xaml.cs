@@ -3,8 +3,11 @@ using System.ComponentModel;
 using BlankSubmit.Searchable;
 using Xamarin.Forms;
 
-namespace BlankSubmit
+namespace BlankSubmit.View.Controls
 {
+    /// <summary>
+    /// Control to autocomplete user, via binding to "backend" filtered collection
+    /// </summary>
     public partial class AutoCompleteBox: ContentView
     {
         public AutoCompleteBox()
@@ -41,6 +44,7 @@ namespace BlankSubmit
 
         /// <summary>
         /// List of provided suggestions
+        /// Desired to be of <see cref="IDisplayable"/> otherwise fallbacks to ToString()
         /// </summary>
         public IEnumerable Suggestions
         {
@@ -51,24 +55,33 @@ namespace BlankSubmit
         public static readonly BindableProperty SelectedItemProperty =
             BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(AutoCompleteBox), null, BindingMode.TwoWay);
 
+        /// <summary>
+        /// Selected autocomplete item
+        /// </summary>
         public object SelectedItem
         {
             get { return GetValue(SelectedItemProperty); }
             set { SetValue(SelectedItemProperty, value); }
         }
 
-        public static readonly BindableProperty ItemTemplateProperty
-            = BindableProperty.Create(nameof(ItemTemplate), typeof(DataTemplate), typeof(AutoCompleteBox), default(DataTemplate));
+        public static readonly BindableProperty SuggestionTemplateProperty
+            = BindableProperty.Create(nameof(SuggestionTemplate), typeof(DataTemplate), typeof(AutoCompleteBox), default(DataTemplate));
 
-        public DataTemplate ItemTemplate
+        /// <summary>
+        /// ItemTemplate of suggestion item
+        /// </summary>
+        public DataTemplate SuggestionTemplate
         {
-            get { return (DataTemplate)GetValue(ItemTemplateProperty); }
-            set { SetValue(ItemTemplateProperty, value); }
+            get { return (DataTemplate)GetValue(SuggestionTemplateProperty); }
+            set { SetValue(SuggestionTemplateProperty, value); }
         }
 
         public static readonly BindableProperty SuggestionsHeightRequestProperty 
             = BindableProperty.Create(nameof(SuggestionsHeightRequest), typeof(double), typeof(AutoCompleteBox), 300.0);
 
+        /// <summary>
+        /// Desired suggestion height
+        /// </summary>
         public double SuggestionsHeightRequest
         {
             get { return (double)GetValue(SuggestionsHeightRequestProperty); }

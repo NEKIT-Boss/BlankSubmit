@@ -5,7 +5,10 @@ using VkAPI.Universities;
 
 namespace BlankSubmit.Model
 {
-    class Person : BindableBase
+    /// <summary>
+    /// Plain domain model
+    /// </summary>
+    class Person
     {
         public string Name { get; set; }
         public string Surname { get; set; }
@@ -14,7 +17,7 @@ namespace BlankSubmit.Model
         /// <summary>
         /// DataLayer reference is usually bad, but for the testing demo will work perfectly fine, 
         /// taking in account, that wrapping will not do any good things.
-        /// </summary>s
+        /// </summary>
         public Country Country { get; set; }
 
         /// <summary>

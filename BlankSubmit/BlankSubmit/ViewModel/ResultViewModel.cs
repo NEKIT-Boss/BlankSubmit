@@ -24,6 +24,7 @@ namespace BlankSubmit.ViewModel
             // Do nothing
         }
 
+        // Cathing the parameters from another view, before the page load
         public void OnNavigatingTo(NavigationParameters parameters)
         {
             Person = parameters[nameof(Person)] as Person;

@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
-    <Compile Include="AutoCompleteBox.xaml.cs">
+    <Compile Include="View\Controls\AutoCompleteBox.xaml.cs">
       <DependentUpon>AutoCompleteBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Validation\Action.cs" />
@@ -149,7 +149,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="BindablePropertySnippet.snippet" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -159,16 +158,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="FodyWeavers.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="View\ResultView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AutoCompleteBox.xaml">
+    <EmbeddedResource Include="View\Controls\AutoCompleteBox.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
