@@ -53,12 +53,95 @@ namespace BlankSubmit.ViewModel
 
         #region Selections
 
-        public string Name { get; set; }
-        public string Surname { get; set; }
+        #region ChainOfValidation
 
-        public SearchableCity SelectedCity { get; set; }
+        private void ValidateSurname()
+        {
+            if (Name != string.Empty) return;
 
-        public SearchableCountry SelectedCountry { get; set; }
+            Surname = string.Empty;
+            ValidateCountry();
+        }
+
+        private void ValidateCountry()
+        {
+            if (Surname != string.Empty) return;
+
+            SelectedCountry = null;
+            CountryName = string.Empty;
+            ValidateCity();
+        }
+
+        private void ValidateCity()
+        {
+            if (SelectedCountry != null) return;
+
+            SelectedCity = null;
+            CityName = string.Empty;
+            ValidateUniversity();
+        }
+
+        private void ValidateUniversity()
+        {
+            if (SelectedCity != null) return;
+
+            SelectedUniversity = null;
+            UniversityName = string.Empty;
+        }
+
+        #endregion
+
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (_name == value) return;
+
+                _name = value;
+                ValidateSurname();
+            }
+        }
+
+        public string Surname
+        {
+            get { return _surname; }
+            set
+            {
+                if (_surname == value) return;
+
+                _surname = value;
+                
+                ValidateCountry();
+            }
+        }
+
+        public SearchableCountry SelectedCountry
+        {
+            get { return _selectedCountry; }
+            set
+            {
+                if (_selectedCountry == value) return;
+
+                _selectedCountry = value;
+
+                ValidateCity();
+            }
+        }
+
+        public SearchableCity SelectedCity
+        {
+            get { return _selectedCity; }
+            set
+            {
+                if (_selectedCity == value) return;
+
+                _selectedCity = value;
+
+                ValidateUniversity();
+            }
+        }
+
         public SearchableUniversity SelectedUniversity { get; set; }
 
         #endregion
@@ -93,6 +176,10 @@ namespace BlankSubmit.ViewModel
 
         private CancellationToken _universitiesCancellationToken;
         private CancellationTokenSource _universitiesCancellationSource;
+        private SearchableCountry _selectedCountry;
+        private SearchableCity _selectedCity;
+        private string _name;
+        private string _surname;
 
         public string CountryName
         {
@@ -104,16 +191,11 @@ namespace BlankSubmit.ViewModel
                 if (SelectedCountry?.DisplayName != value)
                 {
                     SelectedCountry = null;
-
-                    SelectedCity = null;
-                    CityName = string.Empty;
-
-                    SelectedUniversity = null;
-                    UniversityName = string.Empty;
                 }
 
                 string trimmed = _countryName?.Trim();
-                if (string.IsNullOrWhiteSpace(trimmed) || !AllCountries.Result.Contains(char.ToUpper(trimmed[0])))
+                if (string.IsNullOrWhiteSpace(trimmed) 
+                    || !AllCountries.Result.Contains(char.ToUpperInvariant(trimmed[0])))
                 {
                     AvailableCountries = null;
                     return;
@@ -133,11 +215,9 @@ namespace BlankSubmit.ViewModel
             {
                 _cityName = value;
 
-                if (SelectedCity?.DisplayName != value)
-                {
-                    SelectedCity = null;
-                    UniversityName = string.Empty;
-                }
+                if (SelectedCity?.DisplayName == value) return;
+
+                SelectedCity = null;
 
                 if (string.IsNullOrWhiteSpace(_cityName))
                 {
@@ -174,7 +254,7 @@ namespace BlankSubmit.ViewModel
             {
                 _universityName = value;
 
-                if (SelectedUniversity?.DisplayName != SearchHelper.ToSearchable(value))
+                if (SelectedUniversity?.DisplayName != value)
                 {
                     SelectedUniversity = null;
                 }
