@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:XLabs.Forms.Controls;assembly=XLabs.Forms"
+             x:Class="BlankSubmit.View.SubmitView"
+             xmlns:validation="clr-namespace:BlankSubmit.Helpers.Validation;assembly=BlankSubmit"
+             xmlns:blankSubmit="clr-namespace:BlankSubmit;assembly=BlankSubmit"
+             Title="Бланк">
+  
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <validation:Validator x:Key="RootValidator">
+        
+        <validation:Validator.Sets>
+          
+          <validation:RuleSet ApplyImmidiately="True">
+
+              <validation:RuleSet.Rules>
+
+                  <validation:Rule Element="{x:Reference NameEntry}"
+                                   Validators="Required"
+                                   Property="Text">
+                      <validation:Rule.Actions>
+                          <validation:Action Element="{x:Reference SurnameEntry}">
+                              <validation:Action.Setters>
+                                  <validation:PropertySetter InvalidValue="false" ValidValue="true"
+                                                             Property="IsEnabled" />
+                              </validation:Action.Setters>
+                          </validation:Action>
+                      </validation:Rule.Actions>
+                  </validation:Rule>
+
+                  <validation:Rule Element="{x:Reference SurnameEntry}"
+                                   Validators="Required"
+                                   Property="Text">
+                      <validation:Rule.Actions>
+                          <validation:Action Element="{x:Reference CountryEntry}">
+                              <validation:Action.Setters>
+                                  <validation:PropertySetter InvalidValue="false" ValidValue="true"
+                                                             Property="IsEnabled" />
+                              </validation:Action.Setters>
+                          </validation:Action>
+                      </validation:Rule.Actions>
+                  </validation:Rule>
+                
+                  <validation:Rule Element="{x:Reference CountryEntry}"
+                                   Validators="Required"
+                                   Property="SelectedItem">
+                      <validation:Rule.Actions>
+                          <validation:Action Element="{x:Reference CityEntry}">
+                              <validation:Action.Setters>
+                                  <validation:PropertySetter InvalidValue="false" ValidValue="true"
+                                                             Property="IsEnabled" />
+                              </validation:Action.Setters>
+                          </validation:Action>
+                      </validation:Rule.Actions>
+                  </validation:Rule>
+                
+                  <!--<validation:Rule Element="{x:Reference CityEntry}"
+                                   Validators="Required"
+                                   Property="SelectedItem">
+                      <validation:Rule.Actions>
+                          <validation:Action Element="{x:Reference UniversityEntry}">
+                              <validation:Action.Setters>
+                                  <validation:PropertySetter InvalidValue="false" ValidValue="true"
+                                                             Property="IsEnabled" />
+                              </validation:Action.Setters>
+                          </validation:Action>
+                      </validation:Rule.Actions>
+                  </validation:Rule>-->
+
+              </validation:RuleSet.Rules>
+          
+          </validation:RuleSet>
+      
+        </validation:Validator.Sets>
+      
+      </validation:Validator>
+        
+      <Style TargetType="controls:ExtendedEntry">
+        <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+        <Setter Property="XAlign" Value="Center"/>
+      </Style>
+    
+      <Style TargetType="controls:AutoCompleteView">
+        <Setter Property="SearchBorderColor" Value="Gray"/>
+        <Setter Property="SearchBorderWidth" Value="3"/>
+      </Style>
+      
+    </ResourceDictionary>
+  </ContentPage.Resources>
+  
+  <StackLayout Margin="15, 10, 15, 0" Spacing="10" HorizontalOptions="FillAndExpand">
+    <controls:ExtendedEntry x:Name="NameEntry"
+                            Text="{Binding Name}" Placeholder="Имя"/>
+    <controls:ExtendedEntry x:Name="SurnameEntry" 
+                            Text="{Binding Surname}" Placeholder="Фамилия"/>
+    
+      <controls:AutoCompleteView x:Name="CountryEntry"
+                                 Text="{Binding CountryName, Mode=TwoWay}" Placeholder="Название страны" ShowSearchButton="False"
+                                 Suggestions="{Binding AvailableCountries.Result, Mode=OneWay}" 
+                                 SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
+                                 SuggestionsHeightRequest="300">
+      <controls:AutoCompleteView.SuggestionItemDataTemplate>
+        <DataTemplate>
+          <ViewCell Height="60">
+            <Label Text="{Binding Name}" FontSize="12" VerticalOptions="Center" HorizontalOptions="Start"
+                   Margin="10, 0, 0, 0"/>
+          </ViewCell>
+        </DataTemplate>
+      </controls:AutoCompleteView.SuggestionItemDataTemplate>
+    </controls:AutoCompleteView>  
+
+    <!--<controls:AutoCompleteView x:Name="CityEntry" Text="{Binding CityName}" Placeholder="Название города" ShowSearchButton="False"
+                               Suggestions="{Binding AvailableCities.Result, Mode=OneWay}"
+                               SuggestionsHeightRequest="300" SelectedItem="{Binding SelectedCity, Mode=TwoWay}">
+      <controls:AutoCompleteView.SuggestionItemDataTemplate>
+        <DataTemplate>
+          <ViewCell Height="60">
+            <Label Text="{Binding Name}" FontSize="12" VerticalOptions="Center" HorizontalOptions="Start"
+                   Margin="10, 0, 0, 0"/>
+          </ViewCell>
+        </DataTemplate>
+      </controls:AutoCompleteView.SuggestionItemDataTemplate>
+    </controls:AutoCompleteView>-->
+    
+    <!--<Entry x:Name="CityEntry" Text="{Binding CityName}" Placeholder="Название города"/>
+      
+    <ListView ItemsSource="{Binding AvailableCities.Result, Mode=OneWay}" HeightRequest="300" SelectedItem="{Binding SelectedCity, Mode=TwoWay}"
+              IsVisible="{Binding Source={x:Reference CityEntry}, Path=IsFocused}">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell Height="60" >
+            <Label Text="{Binding Name}" FontSize="12" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"
+                   Margin="10, 0, 0, 0"/>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate> 
+    </ListView>-->
+    
+    <blankSubmit:AutoCompleteBox x:Name="CityEntry" Placeholder="Название города"
+                                 Text="{Binding CityName}"
+                                 SelectedItem="{Binding SelectedCity}"
+                                 Suggestions="{Binding AvailableCities.Result}"
+                                 SuggestionsHeightRequest="300" />
+
+    <controls:AutoCompleteView x:Name="UniversityEntry" 
+                               Text="{Binding UniversityName}" Placeholder="Название университета" ShowSearchButton="False"
+                               Suggestions="{Binding AvailableUniversities.Result, Mode=OneWay}" SelectedItem="{Binding SelectedUniversity, Mode=TwoWay}"
+                               SuggestionsHeightRequest="300">
+    <controls:AutoCompleteView.SuggestionItemDataTemplate>
+        <DataTemplate>
+          <ViewCell Height="60">
+            <Label Text="{Binding Name}" FontSize="12" VerticalOptions="Center" HorizontalOptions="Start"
+                   Margin="10, 0, 0, 0"/>
+          </ViewCell>
+        </DataTemplate>
+      </controls:AutoCompleteView.SuggestionItemDataTemplate>
+    </controls:AutoCompleteView>
+  
+    <Button Text="Заполнить бланк" Command="{Binding SubmitCommand}" BackgroundColor="Silver"
+            HorizontalOptions="FillAndExpand" BorderRadius="14" HeightRequest="65" Margin="20, 15, 20, 10"/>
+  </StackLayout>
+  
+</ContentPage>

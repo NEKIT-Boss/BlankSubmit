@@ -4,27 +4,15 @@ using XLabs.Forms.Controls;
 
 namespace BlankSubmit.Searchable
 {
-    class SearchableCountry : IAutoCompleteSearchObject
+    class SearchableCountry : Searchable<Country>
     {
-        private readonly Country _country;
+        public int Id => This.Id;
+        public string Name => This.Name;
 
-        public SearchableCountry(Country country)
+        public override string ToString() => Name;
+
+        public SearchableCountry(Country thing) : base(thing)
         {
-            _country = country;
-        }
-
-        public override string ToString()
-        {
-            return _country.Name;
-        }
-
-        public string Name => _country.Name;
-        public string SearchableName => SearchHelper.ToSearchable(Name);
-        public int Id => _country.Id;
-
-        public string StringToSearchBy()
-        {
-            return ToString();
         }
     }
 }

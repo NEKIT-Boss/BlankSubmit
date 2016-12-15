@@ -1,3 +1,4 @@
+using BlankSubmit.ViewModel;
 using Prism.Unity;
 using Xamarin.Forms;
 
@@ -15,7 +16,8 @@ namespace BlankSubmit
         protected override void RegisterTypes()
         {
             Container.RegisterTypeForNavigation<NavigationPage>();
-            Container.RegisterTypeForNavigation<SubmitView, SubmitViewModel>(NavigationKeys.Submit);
+            Container.RegisterTypeForNavigation<View.SubmitView, SubmitViewModel>(NavigationKeys.Submit);
+            Container.RegisterTypeForNavigation<View.ResultView, ResultViewModel>(NavigationKeys.Result);
         }
     }
 
@@ -23,5 +25,6 @@ namespace BlankSubmit
     {
         public const string Root = "Root";
         public const string Submit = "Submit";
+        public const string Result = "Result";
     }
 }

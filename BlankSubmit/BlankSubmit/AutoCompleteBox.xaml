@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView
+  xmlns="http://xamarin.com/schemas/2014/forms"
+  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+  x:Class="BlankSubmit.AutoCompleteBox">
+  <ContentView.ControlTemplate>
+    <ControlTemplate>
+      <StackLayout Spacing="10">
+        <SearchBar x:Name="SearchEntry"
+                   Text="{TemplateBinding Text}"
+                   Placeholder="{TemplateBinding Placeholder}"
+                   IsEnabled="{TemplateBinding IsEnabled}"/>
+        <ListView ItemsSource="{TemplateBinding Suggestions}"
+                  HeightRequest="{TemplateBinding SuggestionsHeightRequest}"
+                  IsVisible="{Binding Source={x:Reference SearchEntry}, Path=IsFocused}"/>
+      </StackLayout>
+    </ControlTemplate>
+  </ContentView.ControlTemplate>
+</ContentView>

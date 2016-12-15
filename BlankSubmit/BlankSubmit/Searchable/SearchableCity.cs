@@ -1,30 +1,16 @@
-﻿using BlankSubmit.Helpers;
-using VkAPI.Cities;
-using XLabs.Forms.Controls;
+﻿using VkAPI.Cities;
 
 namespace BlankSubmit.Searchable
 {
-    class SearchableCity : IAutoCompleteSearchObject
+    class SearchableCity : Searchable<City>
     {
-        private readonly City _city;
+        public int Id => This.Id;
+        public string Name => This.Name;
 
-        public SearchableCity(City city)
+        public override string ToString() => Name;
+
+        public SearchableCity(City thing) : base(thing)
         {
-            _city = city;
-        }
-
-        public int Id => _city.Id;
-        public string Name => _city.Name;
-        public string SearchableName => SearchHelper.ToSearchable(Name);
-
-        public override string ToString()
-        {
-            return _city.Name;
-        }
-
-        public string StringToSearchBy()
-        {
-            return ToString();
         }
     }
 }

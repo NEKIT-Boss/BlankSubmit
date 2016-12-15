@@ -36,28 +36,51 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
-    <Compile Include="Person.cs" />
+    <Compile Include="AutoCompleteBox.xaml.cs">
+      <DependentUpon>AutoCompleteBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\Validation\Action.cs" />
+    <Compile Include="Helpers\Validation\Actions.cs" />
+    <Compile Include="Helpers\Validation\PredicatePriority.cs" />
+    <Compile Include="Helpers\Validation\PropertySetter.cs" />
+    <Compile Include="Helpers\Validation\PropertySetters.cs" />
+    <Compile Include="Helpers\Validation\Rule.cs" />
+    <Compile Include="Helpers\Validation\RuleResult.cs" />
+    <Compile Include="Helpers\Validation\Rules.cs" />
+    <Compile Include="Helpers\Validation\RuleSet.cs" />
+    <Compile Include="Helpers\Validation\UserValidator.cs" />
+    <Compile Include="Helpers\Validation\ValidateAlphaNumeric.cs" />
+    <Compile Include="Helpers\Validation\ValidateAlphaOnly.cs" />
+    <Compile Include="Helpers\Validation\ValidateDateTime.cs" />
+    <Compile Include="Helpers\Validation\ValidateEmailAddress.cs" />
+    <Compile Include="Helpers\Validation\ValidateNumericOnly.cs" />
+    <Compile Include="Helpers\Validation\ValidationSets.cs" />
+    <Compile Include="Helpers\Validation\Validator.cs" />
+    <Compile Include="Helpers\Validation\ValidatorPredicate.cs" />
+    <Compile Include="Helpers\Validation\Validators.cs" />
+    <Compile Include="Model\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\SearchHelper.cs" />
+    <Compile Include="View\ResultView.xaml.cs">
+      <DependentUpon>ResultView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\ResultViewModel.cs" />
+    <Compile Include="Searchable\Searchable.cs" />
     <Compile Include="Searchable\SearchableCity.cs" />
     <Compile Include="Searchable\SearchableCountry.cs" />
     <Compile Include="Searchable\SearchableUniversity.cs" />
-    <Compile Include="SubmitView.xaml.cs">
+    <Compile Include="View\SubmitView.xaml.cs">
       <DependentUpon>SubmitView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SubmitViewModel.cs" />
+    <Compile Include="ViewModel\SubmitViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SubmitView.xaml">
+    <EmbeddedResource Include="View\SubmitView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Behaviors, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Behaviors.Forms.1.1.0\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Behaviors.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="ExifLib, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\ExifLib.PCL.1.0.1\lib\portable-net45+sl50+win+WindowsPhoneApp81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10\ExifLib.dll</HintPath>
       <Private>True</Private>
@@ -89,6 +112,10 @@
     <Reference Include="Prism.Unity.Forms, Version=6.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Prism.Unity.Forms.6.3.0-pre1\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Prism.Unity.Forms.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="PropertyChanged, Version=1.52.1.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\PropertyChanged.Fody.1.52.1\lib\portable-net4+sl4+wp8+win8+wpa81+MonoAndroid16+MonoTouch40\PropertyChanged.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xamarin.Forms.2.3.3.175\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.Core.dll</HintPath>
@@ -125,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="BindablePropertySnippet.snippet" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +160,21 @@
       <Project>{67F9D3A8-F71E-4428-913F-C37AE82CDB24}</Project>
       <Name>VkAPI</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="View\ResultView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AutoCompleteBox.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.3.175\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.3.175\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
@@ -141,8 +184,10 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Xamarin.Forms.2.3.3.175\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Xamarin.Forms.2.3.3.175\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets'))" />
   </Target>
   <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Import Project="..\..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets" Condition="Exists('..\..\packages\Fody.1.29.4\build\portable-net+sl+win+wpa+wp\Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

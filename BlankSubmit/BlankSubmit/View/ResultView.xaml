@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BlankSubmit.View.ResultView"
+             Title="{Binding Person.FullName, StringFormat='Данные бланка ({0})'}">
+  <StackLayout Margin="15, 25, 15, 0" Spacing="15" HorizontalOptions="FillAndExpand" BindingContext="{Binding Person}">
+    <Label Text="{Binding Name, StringFormat='Имя: {0}'}"/>
+    <Label Text="{Binding Surname, StringFormat='Фамилия: {0}'}"/>
+    <Label Text="{Binding Country.Name, StringFormat='Страна: {0}'}"/>
+    <Label Text="{Binding City.Name, StringFormat='Город: {0}'}"/>
+    <Label Text="{Binding University.Name, StringFormat='ВУЗ: {0}'}"/>
+  </StackLayout>
+</ContentPage>

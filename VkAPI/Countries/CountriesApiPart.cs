@@ -45,7 +45,7 @@ namespace VkAPI
             catch (Exception)
             {
                 // TODO
-                Debugger.Break();
+                //Debugger.Break();
                 return null;
             }
         }
