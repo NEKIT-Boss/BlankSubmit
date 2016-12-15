@@ -91,7 +91,8 @@ namespace BlankSubmit
 
             if (e.PropertyName == nameof(IsFocused) || e.PropertyName == nameof(Text))
             {
-                IsSuggestionsListOpen = !string.IsNullOrWhiteSpace(searchBar.Text) && searchBar.IsFocused;
+                IsSuggestionsListOpen = !string.IsNullOrWhiteSpace(searchBar.Text)
+                                        && searchBar.IsFocused;
             }
         }
 

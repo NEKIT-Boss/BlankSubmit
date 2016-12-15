@@ -12,13 +12,15 @@ using Nito.AsyncEx;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Navigation;
-using PropertyChanged;
 using VkAPI;
 
 namespace BlankSubmit.ViewModel
 {
     class SubmitViewModel: BindableBase, INavigationAware
     {
+        /// <summary>
+        /// Passed prism navigation service
+        /// </summary>
         private readonly INavigationService _navigationService;
 
         public SubmitViewModel(INavigationService navigationService)
@@ -33,25 +35,57 @@ namespace BlankSubmit.ViewModel
                 .ObservesProperty(() => Surname);
         }
 
-        private void Submit()
+        public string Name
         {
-            _navigationService.NavigateAsync(NavigationKeys.Result, new NavigationParameters()
+            get { return _name; }
+            set
             {
-                {
-                    nameof(Person),
-                    new Person
-                    {
-                        Name = Name,
-                        Surname = Surname,
-                        Country = SelectedCountry,
-                        City = SelectedCity,
-                        University = SelectedUniversity
-                    }
-                }
-            });
+                if (_name == value) return;
+
+                if (!SetProperty(ref _name, value)) return;
+                ValidateSurname();
+            }
         }
 
-        #region Selections
+        public string Surname
+        {
+            get { return _surname; }
+            set
+            {
+                if (!SetProperty(ref _surname, value)) return;
+                ValidateCountry();
+            }
+        }
+
+        #region Selectable
+
+        public SearchableCountry SelectedCountry
+        {
+            get { return _selectedCountry; }
+            set
+            {
+                if (!SetProperty(ref _selectedCountry, value)) return;
+                ValidateCity();
+            }
+        }
+
+        public SearchableCity SelectedCity
+        {
+            get { return _selectedCity; }
+            set
+            {
+                SetProperty(ref _selectedCity, value);
+                ValidateUniversity();
+            }
+        }
+
+        public SearchableUniversity SelectedUniversity
+        {
+            get { return _selectedUniversity; }
+            set { SetProperty(ref _selectedUniversity, value); }
+        }
+
+        #endregion
 
         #region ChainOfValidation
 
@@ -91,64 +125,27 @@ namespace BlankSubmit.ViewModel
 
         #endregion
 
-        public string Name
-        {
-            get { return _name; }
-            set
-            {
-                if (_name == value) return;
-
-                _name = value;
-                ValidateSurname();
-            }
-        }
-
-        public string Surname
-        {
-            get { return _surname; }
-            set
-            {
-                if (_surname == value) return;
-
-                _surname = value;
-                
-                ValidateCountry();
-            }
-        }
-
-        public SearchableCountry SelectedCountry
-        {
-            get { return _selectedCountry; }
-            set
-            {
-                if (_selectedCountry == value) return;
-
-                _selectedCountry = value;
-
-                ValidateCity();
-            }
-        }
-
-        public SearchableCity SelectedCity
-        {
-            get { return _selectedCity; }
-            set
-            {
-                if (_selectedCity == value) return;
-
-                _selectedCity = value;
-
-                ValidateUniversity();
-            }
-        }
-
-        public SearchableUniversity SelectedUniversity { get; set; }
-
-        #endregion
-
         #region Commands
 
         public ICommand SubmitCommand { get; }
+
+        private void Submit()
+        {
+            _navigationService.NavigateAsync(NavigationKeys.Result, new NavigationParameters()
+            {
+                {
+                    nameof(Person),
+                    new Person
+                    {
+                        Name = Name,
+                        Surname = Surname,
+                        Country = SelectedCountry,
+                        City = SelectedCity,
+                        University = SelectedUniversity
+                    }
+                }
+            });
+        }
 
         private bool CanSubmit()
             => !string.IsNullOrWhiteSpace(Name)
@@ -159,39 +156,122 @@ namespace BlankSubmit.ViewModel
 
         #endregion
 
-        public INotifyTaskCompletion<List<SearchableCity>> AvailableCities { get; private set; }
-        public INotifyTaskCompletion<ILookup<char, SearchableCountry>> AllCountries { get; private set; }
-        public INotifyTaskCompletion<List<SearchableUniversity>> AvailableUniversities { get; private set; }
+        #region AsyncLoading
 
-        public List<SearchableCountry> AvailableCountries { get; private set; }
+        private List<SearchableCountry> _availableCountries;
 
+        private INotifyTaskCompletion<ILookup<char, SearchableCountry>> _allCountries;
+        private INotifyTaskCompletion<List<SearchableCity>> _availableCities;
+        private INotifyTaskCompletion<List<SearchableUniversity>> _availableUniversities;
+
+        /// <summary>
+        /// Autocompletion delay, to avoid re requesting on property changed event
+        /// </summary>
+        private static TimeSpan AutoCompleteDelay { get; } = TimeSpan.FromMilliseconds(100);
+
+        /// <summary>
+        /// List of availables for suggestion countries
+        /// </summary>
+        public List<SearchableCountry> AvailableCountries
+        {
+            get { return _availableCountries; }
+            private set { SetProperty(ref _availableCountries, value); }
+        }
+
+        /// <summary>
+        /// Bindable task completion for indexed lookup of countries
+        /// </summary>
+        public INotifyTaskCompletion<ILookup<char, SearchableCountry>> AllCountries
+        {
+            get { return _allCountries; }
+            private set { SetProperty(ref _allCountries, value); }
+        }
+
+        /// <summary>
+        /// Last <see cref="LoadCitiesAsync"/> cancellation source
+        /// </summary>
+        private CancellationTokenSource _citiesCancellationSource;
+
+        /// <summary>
+        /// Task to load cities
+        /// </summary>
+        /// <param name="cancellationToken">Token to cancel the task</param>
+        /// <param name="cityName">parameter to persist <see cref="CityName"/></param>
+        /// <returns>Loaded and filtered cities</returns>
+        private async Task<List<SearchableCity>> LoadCitiesAsync(CancellationToken cancellationToken, string cityName)
+        {
+            await Task.Delay(AutoCompleteDelay, cancellationToken);
+            if (cancellationToken.IsCancellationRequested) return null;
+
+            return (await VkApi.SearchForCitiesAsync(
+                SelectedCountry.Id,
+                cityName))
+                .Select(x => new SearchableCity(x))
+                .ToList();
+        }
+
+        /// <summary>
+        /// Bindable task completion for available list of cities suggestion
+        /// </summary>
+        public INotifyTaskCompletion<List<SearchableCity>> AvailableCities
+        {
+            get { return _availableCities; }
+            private set { SetProperty(ref _availableCities, value); }
+        }
+
+        /// <summary>
+        /// Last <see cref="LoadUniversitiesAsync"/> cancellation source
+        /// </summary>
+        private CancellationTokenSource _universitiesCancellationSource;
+
+        /// <summary>
+        /// Task to load universities
+        /// </summary>
+        /// <param name="cancellationToken">Token to cancel the task</param>
+        /// <param name="universityName"></param>
+        /// <returns></returns>
+        private async Task<List<SearchableUniversity>> LoadUniversitiesAsync(CancellationToken cancellationToken, string universityName)
+        {
+            await Task.Delay(AutoCompleteDelay, cancellationToken);
+            if (cancellationToken.IsCancellationRequested) return null;
+
+            return (await VkApi.SearchForUniversitiesAsync(
+                SelectedCountry.Id, SelectedCity.Id,
+                universityName))
+                .Select(x => new SearchableUniversity(x))
+                .ToList();
+        }
+
+        /// <summary>
+        /// Bindable task completion for available list of universities suggestion
+        /// </summary>
+        public INotifyTaskCompletion<List<SearchableUniversity>> AvailableUniversities
+        {
+            get { return _availableUniversities; }
+            private set { SetProperty(ref _availableUniversities, value); }
+        }
+
+        #endregion
+
+        private string _name;
+        private string _surname;
         private string _countryName;
         private string _cityName;
         private string _universityName;
 
-        private static TimeSpan AutoCompleteDelay { get; } = TimeSpan.FromMilliseconds(100);
-
-        private CancellationToken _citiesCancellationToken;
-        private CancellationTokenSource _citiesCancellationSource;
-
-        private CancellationToken _universitiesCancellationToken;
-        private CancellationTokenSource _universitiesCancellationSource;
         private SearchableCountry _selectedCountry;
         private SearchableCity _selectedCity;
-        private string _name;
-        private string _surname;
+        private SearchableUniversity _selectedUniversity;
 
         public string CountryName
         {
             get { return _countryName; }
             set
             {
-                _countryName = value;
-
-                if (SelectedCountry?.DisplayName != value)
-                {
-                    SelectedCountry = null;
-                }
+                if (!SetProperty(ref _countryName, value)) return;
+                if (SelectedCountry?.DisplayName == value) return;
+                
+                SelectedCountry = null;
 
                 string trimmed = _countryName?.Trim();
                 if (string.IsNullOrWhiteSpace(trimmed) 
@@ -213,8 +293,7 @@ namespace BlankSubmit.ViewModel
             get { return _cityName; }
             set
             {
-                _cityName = value;
-
+                if (!SetProperty(ref _cityName, value)) return;
                 if (SelectedCity?.DisplayName == value) return;
 
                 SelectedCity = null;
@@ -229,22 +308,9 @@ namespace BlankSubmit.ViewModel
                 _citiesCancellationSource?.Dispose();
 
                 _citiesCancellationSource = new CancellationTokenSource();
-                _citiesCancellationToken = _citiesCancellationSource.Token;
 
-                AvailableCities = NotifyTaskCompletion.Create(LoadCitiesAsync(_citiesCancellationToken, CityName));
+                AvailableCities = NotifyTaskCompletion.Create(LoadCitiesAsync(_citiesCancellationSource.Token, CityName));
             }
-        }
-
-        private async Task<List<SearchableCity>> LoadCitiesAsync(CancellationToken cancellationToken, string cityName)
-        {
-            await Task.Delay(AutoCompleteDelay, cancellationToken);
-            if(cancellationToken.IsCancellationRequested) return null;
-            
-            return (await VkApi.SearchForCitiesAsync(
-                SelectedCountry.Id,
-                cityName))
-                .Select(x => new SearchableCity(x))
-                .ToList();
         }
 
         public string UniversityName
@@ -252,12 +318,10 @@ namespace BlankSubmit.ViewModel
             get { return _universityName; }
             set
             {
-                _universityName = value;
-
-                if (SelectedUniversity?.DisplayName != value)
-                {
-                    SelectedUniversity = null;
-                }
+                if (!SetProperty(ref _universityName, value)) return;
+                if (SelectedUniversity?.DisplayName == value) return;
+                 
+                SelectedUniversity = null;
 
                 if (string.IsNullOrWhiteSpace(value))
                 {
@@ -269,22 +333,9 @@ namespace BlankSubmit.ViewModel
                 _universitiesCancellationSource?.Dispose();
 
                 _universitiesCancellationSource = new CancellationTokenSource();
-                _universitiesCancellationToken = _universitiesCancellationSource.Token;
 
-                AvailableUniversities = NotifyTaskCompletion.Create(LoadUniversitiesAsync(_universitiesCancellationToken, UniversityName));
+                AvailableUniversities = NotifyTaskCompletion.Create(LoadUniversitiesAsync(_universitiesCancellationSource.Token, UniversityName));
             }
-        }
-
-        private async Task<List<SearchableUniversity>> LoadUniversitiesAsync(CancellationToken cancellationToken, string universityName)
-        {
-            await Task.Delay(AutoCompleteDelay, cancellationToken);
-            if (cancellationToken.IsCancellationRequested) return null;
-
-            return (await VkApi.SearchForUniversitiesAsync(
-                SelectedCountry.Id, SelectedCity.Id,
-                universityName))
-                .Select(x => new SearchableUniversity(x))
-                .ToList();
         }
 
         public void OnNavigatedFrom(NavigationParameters parameters)

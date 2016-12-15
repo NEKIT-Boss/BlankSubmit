@@ -6,7 +6,13 @@ namespace BlankSubmit.ViewModel
 {
     class ResultViewModel: BindableBase, INavigationAware
     {
-        public Person Person { get; private set; }
+        private Person _person;
+
+        public Person Person
+        {
+            get { return _person; }
+            private set { SetProperty(ref _person, value); }
+        }
 
         public void OnNavigatedFrom(NavigationParameters parameters)
         {

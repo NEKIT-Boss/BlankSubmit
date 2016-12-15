@@ -96,40 +96,43 @@
       </DataTemplate>
     </ResourceDictionary>
   </ContentPage.Resources>
-  
-  <StackLayout Margin="15, 10, 15, 0" Spacing="10" HorizontalOptions="FillAndExpand">
-    <controls:ExtendedEntry x:Name="NameEntry"
-                            Text="{Binding Name}" Placeholder="Имя"/>
-    <controls:ExtendedEntry x:Name="SurnameEntry" 
-                            Text="{Binding Surname}" Placeholder="Фамилия"/>
-    
+
+  <ScrollView VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand" Padding="10, 0">
+    <StackLayout Padding="15, 25, 15, 0" Spacing="10" HorizontalOptions="FillAndExpand"
+                 VerticalOptions="FillAndExpand">
+      <controls:ExtendedEntry x:Name="NameEntry"
+                              Text="{Binding Name}" Placeholder="Имя"/>
+      <controls:ExtendedEntry x:Name="SurnameEntry"
+                              Text="{Binding Surname}" Placeholder="Фамилия"/>
+
       <blankSubmit:AutoCompleteBox x:Name="CountryAutocomplete" Placeholder="Название страны"
                                  Text="{Binding CountryName}"
                                  SelectedItem="{Binding SelectedCountry}"
                                  Suggestions="{Binding AvailableCountries}"
                                  SuggestionsHeightRequest="300" ItemTemplate="{StaticResource AutocompleteTemplate}">
-    
-    </blankSubmit:AutoCompleteBox>
 
-    
-    <blankSubmit:AutoCompleteBox x:Name="CityEntry" Placeholder="Название города"
-                                 Text="{Binding CityName}"
-                                 SelectedItem="{Binding SelectedCity}"
-                                 Suggestions="{Binding AvailableCities.Result}"
-                                 SuggestionsHeightRequest="300" ItemTemplate="{StaticResource AutocompleteTemplate}">
-    
-    </blankSubmit:AutoCompleteBox>
+      </blankSubmit:AutoCompleteBox>
 
-    <blankSubmit:AutoCompleteBox x:Name="UniversityAutocomplete" Placeholder="Название университета"
-                                 Text="{Binding UniversityName}"
-                                 SelectedItem="{Binding SelectedUniversity}"
-                                 Suggestions="{Binding AvailableUniversities.Result}"
-                                 SuggestionsHeightRequest="300" ItemTemplate="{StaticResource AutocompleteTemplate}">
 
-    </blankSubmit:AutoCompleteBox>
-  
-    <Button Text="Заполнить бланк" Command="{Binding SubmitCommand}" BackgroundColor="Silver"
-            HorizontalOptions="FillAndExpand" BorderRadius="14" HeightRequest="65" Margin="20, 15, 20, 10"/>
-  </StackLayout>
+      <blankSubmit:AutoCompleteBox x:Name="CityEntry" Placeholder="Название города"
+                                   Text="{Binding CityName}"
+                                   SelectedItem="{Binding SelectedCity}"
+                                   Suggestions="{Binding AvailableCities.Result}"
+                                   SuggestionsHeightRequest="300" ItemTemplate="{StaticResource AutocompleteTemplate}">
+
+      </blankSubmit:AutoCompleteBox>
+
+      <blankSubmit:AutoCompleteBox x:Name="UniversityAutocomplete" Placeholder="Название университета"
+                                   Text="{Binding UniversityName}"
+                                   SelectedItem="{Binding SelectedUniversity}"
+                                   Suggestions="{Binding AvailableUniversities.Result}"
+                                   SuggestionsHeightRequest="300" ItemTemplate="{StaticResource AutocompleteTemplate}">
+
+      </blankSubmit:AutoCompleteBox>
+
+      <Button Text="Заполнить бланк" Command="{Binding SubmitCommand}" BackgroundColor="Silver"
+              HorizontalOptions="FillAndExpand" BorderRadius="14" HeightRequest="65" Margin="20, 15, 20, 10"/>
+    </StackLayout>
+  </ScrollView>
   
 </ContentPage>
