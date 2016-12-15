@@ -12,20 +12,21 @@ namespace VkAPI
 {
     public static partial class VkApi
     {
-        public static async Task<List<University>> SearchForUniversitiesAsync(int countryId, int cityId, string searchQuery)
+        public static async Task<List<University>> SearchForUniversitiesAsync(int countryId, int cityId, string searchQuery, int count = DefaultCount)
         {
             const string citiesMethod = "getUniversities";
 
             string countryParam = $"country_id={countryId}";
             string cityParam = $"city_id={cityId}";
             string queryParam = $"q={searchQuery}";
+            string countParam = $"count={count}";
 
             try
             {
                 using (var client = new HttpClient())
                 {
                     var requestUri = BuildDatabaseUri(citiesMethod,
-                        countryParam, cityParam, queryParam);
+                        countryParam, cityParam, queryParam, countParam);
 
                     var response = await client.GetAsync(requestUri);
                     response.EnsureSuccessStatusCode();
@@ -42,6 +43,7 @@ namespace VkAPI
             catch (Exception)
             {
                 // TODO
+                // Request exception behavior was not specified
                 return null;
             }
         }
