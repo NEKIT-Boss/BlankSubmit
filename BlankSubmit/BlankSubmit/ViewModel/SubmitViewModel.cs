@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,14 +31,7 @@ namespace BlankSubmit.ViewModel
                 .ObservesProperty(() => SelectedUniversity)
                 .ObservesProperty(() => Name)
                 .ObservesProperty(() => Surname);
-
-            CountrySelectedCommand = new DelegateCommand<SearchableCountry>(x =>
-            {
-                SelectedCountry = x;
-            });
         }
-
-        public DelegateCommand<SearchableCountry> CountrySelectedCommand { get; }
 
         private void Submit()
         {
@@ -64,11 +58,7 @@ namespace BlankSubmit.ViewModel
 
         public SearchableCity SelectedCity { get; set; }
 
-        public SearchableCountry SelectedCountry
-        {
-            get;
-            set;
-        }
+        public SearchableCountry SelectedCountry { get; set; }
         public SearchableUniversity SelectedUniversity { get; set; }
 
         #endregion
@@ -87,15 +77,22 @@ namespace BlankSubmit.ViewModel
         #endregion
 
         public INotifyTaskCompletion<List<SearchableCity>> AvailableCities { get; private set; }
-        public INotifyTaskCompletion<List<SearchableCountry>> AvailableCountries { get; private set; }
+        public INotifyTaskCompletion<ILookup<char, SearchableCountry>> AllCountries { get; private set; }
         public INotifyTaskCompletion<List<SearchableUniversity>> AvailableUniversities { get; private set; }
+
+        public List<SearchableCountry> AvailableCountries { get; private set; }
 
         private string _countryName;
         private string _cityName;
         private string _universityName;
 
-        private CancellationTokenSource _citiesCancellationSource;
+        private static TimeSpan AutoCompleteDelay { get; } = TimeSpan.FromMilliseconds(100);
+
         private CancellationToken _citiesCancellationToken;
+        private CancellationTokenSource _citiesCancellationSource;
+
+        private CancellationToken _universitiesCancellationToken;
+        private CancellationTokenSource _universitiesCancellationSource;
 
         public string CountryName
         {
@@ -104,7 +101,7 @@ namespace BlankSubmit.ViewModel
             {
                 _countryName = value;
 
-                if (SelectedCountry?.ToString() != value)
+                if (SelectedCountry?.DisplayName != value)
                 {
                     SelectedCountry = null;
 
@@ -115,6 +112,17 @@ namespace BlankSubmit.ViewModel
                     UniversityName = string.Empty;
                 }
 
+                string trimmed = _countryName?.Trim();
+                if (string.IsNullOrWhiteSpace(trimmed) || !AllCountries.Result.Contains(char.ToUpper(trimmed[0])))
+                {
+                    AvailableCountries = null;
+                    return;
+                }
+
+                AvailableCountries = AllCountries.Result[char.ToUpper(trimmed[0])]
+                    .Where(x => SearchHelper.ToSearchable(x.DisplayName)
+                        .StartsWith(SearchHelper.ToSearchable(_countryName)))
+                        .ToList();
             }
         }
 
@@ -125,7 +133,7 @@ namespace BlankSubmit.ViewModel
             {
                 _cityName = value;
 
-                if (SelectedCity?.SearchIndex != value)
+                if (SelectedCity?.DisplayName != value)
                 {
                     SelectedCity = null;
                     UniversityName = string.Empty;
@@ -149,7 +157,7 @@ namespace BlankSubmit.ViewModel
 
         private async Task<List<SearchableCity>> LoadCitiesAsync(CancellationToken cancellationToken, string cityName)
         {
-            await Task.Delay(TimeSpan.FromMilliseconds(200), cancellationToken);
+            await Task.Delay(AutoCompleteDelay, cancellationToken);
             if(cancellationToken.IsCancellationRequested) return null;
             
             return (await VkApi.SearchForCitiesAsync(
@@ -166,20 +174,37 @@ namespace BlankSubmit.ViewModel
             {
                 _universityName = value;
 
-                if (SelectedUniversity?.SearchIndex != SearchHelper.ToSearchable(value))
+                if (SelectedUniversity?.DisplayName != SearchHelper.ToSearchable(value))
                 {
                     SelectedUniversity = null;
                 }
 
-                if (string.IsNullOrWhiteSpace(value)) return;
-
-                AvailableUniversities = NotifyTaskCompletion.Create(async () =>
+                if (string.IsNullOrWhiteSpace(value))
                 {
-                    return (await VkApi.SearchForUniversitiesAsync(SelectedCountry.Id, SelectedCity.Id, UniversityName))
-                        .Select(x => new SearchableUniversity(x))
-                        .ToList();
-                });
+                    AvailableUniversities = null;
+                    return;
+                }
+
+                _universitiesCancellationSource?.Cancel();
+                _universitiesCancellationSource?.Dispose();
+
+                _universitiesCancellationSource = new CancellationTokenSource();
+                _universitiesCancellationToken = _universitiesCancellationSource.Token;
+
+                AvailableUniversities = NotifyTaskCompletion.Create(LoadUniversitiesAsync(_universitiesCancellationToken, UniversityName));
             }
+        }
+
+        private async Task<List<SearchableUniversity>> LoadUniversitiesAsync(CancellationToken cancellationToken, string universityName)
+        {
+            await Task.Delay(AutoCompleteDelay, cancellationToken);
+            if (cancellationToken.IsCancellationRequested) return null;
+
+            return (await VkApi.SearchForUniversitiesAsync(
+                SelectedCountry.Id, SelectedCity.Id,
+                universityName))
+                .Select(x => new SearchableUniversity(x))
+                .ToList();
         }
 
         public void OnNavigatedFrom(NavigationParameters parameters)
@@ -189,9 +214,9 @@ namespace BlankSubmit.ViewModel
 
         public void OnNavigatedTo(NavigationParameters parameters)
         {
-            AvailableCountries = NotifyTaskCompletion.Create(async () => (await VkApi.GetAllCountriesAsync())
+            AllCountries = NotifyTaskCompletion.Create(async () => (await VkApi.GetAllCountriesAsync())
                 .Select(x => new SearchableCountry(x))
-                .ToList());
+                .ToLookup(x => char.ToUpperInvariant(x.DisplayName[0])));
         }
 
         public void OnNavigatingTo(NavigationParameters parameters)

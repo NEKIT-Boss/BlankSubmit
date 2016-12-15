@@ -6,13 +6,18 @@
   <ContentView.ControlTemplate>
     <ControlTemplate>
       <StackLayout Spacing="10">
+        
         <SearchBar x:Name="SearchEntry"
                    Text="{TemplateBinding Text}"
                    Placeholder="{TemplateBinding Placeholder}"
-                   IsEnabled="{TemplateBinding IsEnabled}"/>
+                   IsEnabled="{TemplateBinding IsEnabled}" PropertyChanged="SearchEntry_OnPropertyChanged"/>
+        
         <ListView ItemsSource="{TemplateBinding Suggestions}"
                   HeightRequest="{TemplateBinding SuggestionsHeightRequest}"
-                  IsVisible="{Binding Source={x:Reference SearchEntry}, Path=IsFocused}"/>
+                  SelectedItem="{TemplateBinding SelectedItem}"
+                  ItemTemplate="{TemplateBinding ItemTemplate}"
+                  IsVisible="{TemplateBinding IsSuggestionsListOpen}" ItemSelected="ListView_OnItemSelected"/>
+    
       </StackLayout>
     </ControlTemplate>
   </ContentView.ControlTemplate>

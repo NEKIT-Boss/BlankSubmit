@@ -9,7 +9,7 @@ namespace BlankSubmit.Searchable
         public int Id => This.Id;
         public string Name => This.Name;
 
-        public override string ToString() => Name;
+        public override string DisplayName => Name;
 
         public SearchableCountry(Country thing) : base(thing)
         {

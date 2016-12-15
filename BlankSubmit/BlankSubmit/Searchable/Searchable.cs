@@ -1,9 +1,10 @@
-﻿using BlankSubmit.Helpers;
+﻿using System.Text.RegularExpressions;
+using BlankSubmit.Helpers;
 using XLabs.Forms.Controls;
 
 namespace BlankSubmit.Searchable
 {
-    public abstract class Searchable<T> where T: class, new()
+    public abstract class Searchable<T>: IDisplayable where T: class, new()
     {
         protected T This { get; }
 
@@ -12,11 +13,13 @@ namespace BlankSubmit.Searchable
             This = thing ?? new T();
         }
 
-        public string SearchIndex => SearchHelper.ToSearchable(ToString());
+        public override string ToString() => DisplayName;
 
         public static implicit operator T(Searchable<T> searchable)
         {
             return searchable.This;
         }
+
+        public abstract string DisplayName { get; }
     }
 }

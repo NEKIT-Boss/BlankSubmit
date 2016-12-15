@@ -34,7 +34,7 @@
                                    Validators="Required"
                                    Property="Text">
                       <validation:Rule.Actions>
-                          <validation:Action Element="{x:Reference CountryEntry}">
+                          <validation:Action Element="{x:Reference CountryAutocomplete}">
                               <validation:Action.Setters>
                                   <validation:PropertySetter InvalidValue="false" ValidValue="true"
                                                              Property="IsEnabled" />
@@ -43,7 +43,7 @@
                       </validation:Rule.Actions>
                   </validation:Rule>
                 
-                  <validation:Rule Element="{x:Reference CountryEntry}"
+                  <validation:Rule Element="{x:Reference CountryAutocomplete}"
                                    Validators="Required"
                                    Property="SelectedItem">
                       <validation:Rule.Actions>
@@ -56,18 +56,18 @@
                       </validation:Rule.Actions>
                   </validation:Rule>
                 
-                  <!--<validation:Rule Element="{x:Reference CityEntry}"
+                  <validation:Rule Element="{x:Reference CityEntry}"
                                    Validators="Required"
                                    Property="SelectedItem">
                       <validation:Rule.Actions>
-                          <validation:Action Element="{x:Reference UniversityEntry}">
+                          <validation:Action Element="{x:Reference UniversityAutocomplete}">
                               <validation:Action.Setters>
                                   <validation:PropertySetter InvalidValue="false" ValidValue="true"
                                                              Property="IsEnabled" />
                               </validation:Action.Setters>
                           </validation:Action>
                       </validation:Rule.Actions>
-                  </validation:Rule>-->
+                  </validation:Rule>
 
               </validation:RuleSet.Rules>
           
@@ -87,6 +87,13 @@
         <Setter Property="SearchBorderWidth" Value="3"/>
       </Style>
       
+    
+      <DataTemplate x:Key="AutocompleteTemplate">
+          <ViewCell>
+            <Label Text="{Binding Name}" FontSize="12" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"
+                   Margin="10, 5, 0, 5"/>
+          </ViewCell>
+      </DataTemplate>
     </ResourceDictionary>
   </ContentPage.Resources>
   
@@ -96,67 +103,30 @@
     <controls:ExtendedEntry x:Name="SurnameEntry" 
                             Text="{Binding Surname}" Placeholder="Фамилия"/>
     
-      <controls:AutoCompleteView x:Name="CountryEntry"
-                                 Text="{Binding CountryName, Mode=TwoWay}" Placeholder="Название страны" ShowSearchButton="False"
-                                 Suggestions="{Binding AvailableCountries.Result, Mode=OneWay}" 
-                                 SelectedItem="{Binding SelectedCountry, Mode=TwoWay}"
-                                 SuggestionsHeightRequest="300">
-      <controls:AutoCompleteView.SuggestionItemDataTemplate>
-        <DataTemplate>
-          <ViewCell Height="60">
-            <Label Text="{Binding Name}" FontSize="12" VerticalOptions="Center" HorizontalOptions="Start"
-                   Margin="10, 0, 0, 0"/>
-          </ViewCell>
-        </DataTemplate>
-      </controls:AutoCompleteView.SuggestionItemDataTemplate>
-    </controls:AutoCompleteView>  
-
-    <!--<controls:AutoCompleteView x:Name="CityEntry" Text="{Binding CityName}" Placeholder="Название города" ShowSearchButton="False"
-                               Suggestions="{Binding AvailableCities.Result, Mode=OneWay}"
-                               SuggestionsHeightRequest="300" SelectedItem="{Binding SelectedCity, Mode=TwoWay}">
-      <controls:AutoCompleteView.SuggestionItemDataTemplate>
-        <DataTemplate>
-          <ViewCell Height="60">
-            <Label Text="{Binding Name}" FontSize="12" VerticalOptions="Center" HorizontalOptions="Start"
-                   Margin="10, 0, 0, 0"/>
-          </ViewCell>
-        </DataTemplate>
-      </controls:AutoCompleteView.SuggestionItemDataTemplate>
-    </controls:AutoCompleteView>-->
+      <blankSubmit:AutoCompleteBox x:Name="CountryAutocomplete" Placeholder="Название страны"
+                                 Text="{Binding CountryName}"
+                                 SelectedItem="{Binding SelectedCountry}"
+                                 Suggestions="{Binding AvailableCountries}"
+                                 SuggestionsHeightRequest="300" ItemTemplate="{StaticResource AutocompleteTemplate}">
     
-    <!--<Entry x:Name="CityEntry" Text="{Binding CityName}" Placeholder="Название города"/>
-      
-    <ListView ItemsSource="{Binding AvailableCities.Result, Mode=OneWay}" HeightRequest="300" SelectedItem="{Binding SelectedCity, Mode=TwoWay}"
-              IsVisible="{Binding Source={x:Reference CityEntry}, Path=IsFocused}">
-      <ListView.ItemTemplate>
-        <DataTemplate>
-          <ViewCell Height="60" >
-            <Label Text="{Binding Name}" FontSize="12" VerticalOptions="CenterAndExpand" HorizontalOptions="Start"
-                   Margin="10, 0, 0, 0"/>
-          </ViewCell>
-        </DataTemplate>
-      </ListView.ItemTemplate> 
-    </ListView>-->
+    </blankSubmit:AutoCompleteBox>
+
     
     <blankSubmit:AutoCompleteBox x:Name="CityEntry" Placeholder="Название города"
                                  Text="{Binding CityName}"
                                  SelectedItem="{Binding SelectedCity}"
                                  Suggestions="{Binding AvailableCities.Result}"
-                                 SuggestionsHeightRequest="300" />
+                                 SuggestionsHeightRequest="300" ItemTemplate="{StaticResource AutocompleteTemplate}">
+    
+    </blankSubmit:AutoCompleteBox>
 
-    <controls:AutoCompleteView x:Name="UniversityEntry" 
-                               Text="{Binding UniversityName}" Placeholder="Название университета" ShowSearchButton="False"
-                               Suggestions="{Binding AvailableUniversities.Result, Mode=OneWay}" SelectedItem="{Binding SelectedUniversity, Mode=TwoWay}"
-                               SuggestionsHeightRequest="300">
-    <controls:AutoCompleteView.SuggestionItemDataTemplate>
-        <DataTemplate>
-          <ViewCell Height="60">
-            <Label Text="{Binding Name}" FontSize="12" VerticalOptions="Center" HorizontalOptions="Start"
-                   Margin="10, 0, 0, 0"/>
-          </ViewCell>
-        </DataTemplate>
-      </controls:AutoCompleteView.SuggestionItemDataTemplate>
-    </controls:AutoCompleteView>
+    <blankSubmit:AutoCompleteBox x:Name="UniversityAutocomplete" Placeholder="Название университета"
+                                 Text="{Binding UniversityName}"
+                                 SelectedItem="{Binding SelectedUniversity}"
+                                 Suggestions="{Binding AvailableUniversities.Result}"
+                                 SuggestionsHeightRequest="300" ItemTemplate="{StaticResource AutocompleteTemplate}">
+
+    </blankSubmit:AutoCompleteBox>
   
     <Button Text="Заполнить бланк" Command="{Binding SubmitCommand}" BackgroundColor="Silver"
             HorizontalOptions="FillAndExpand" BorderRadius="14" HeightRequest="65" Margin="20, 15, 20, 10"/>

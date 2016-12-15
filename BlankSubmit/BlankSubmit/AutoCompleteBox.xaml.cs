@@ -1,5 +1,6 @@
 ﻿using System.Collections;
-using Nito.AsyncEx;
+using System.ComponentModel;
+using BlankSubmit.Searchable;
 using Xamarin.Forms;
 
 namespace BlankSubmit
@@ -48,7 +49,7 @@ namespace BlankSubmit
         }
 
         public static readonly BindableProperty SelectedItemProperty =
-            BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(AutoCompleteBox));
+            BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(AutoCompleteBox), null, BindingMode.TwoWay);
 
         public object SelectedItem
         {
@@ -66,12 +67,37 @@ namespace BlankSubmit
         }
 
         public static readonly BindableProperty SuggestionsHeightRequestProperty 
-            = BindableProperty.Create(nameof(SuggestionsHeightRequest), typeof(double), typeof(AutoCompleteBox), default(double));
+            = BindableProperty.Create(nameof(SuggestionsHeightRequest), typeof(double), typeof(AutoCompleteBox), 300.0);
 
         public double SuggestionsHeightRequest
         {
             get { return (double)GetValue(SuggestionsHeightRequestProperty); }
             set { SetValue(SuggestionsHeightRequestProperty, value); }
+        }
+
+        public static readonly BindableProperty IsSuggestionsListOpenProperty
+            = BindableProperty.Create(nameof(IsSuggestionsListOpen), typeof(bool), typeof(AutoCompleteBox), false);
+
+        public bool IsSuggestionsListOpen
+        {
+            get { return (bool)GetValue(IsSuggestionsListOpenProperty); }
+            private set { SetValue(IsSuggestionsListOpenProperty, value); }
+        }
+
+        private void SearchEntry_OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var searchBar = sender as SearchBar;
+            if (searchBar == null) return;
+
+            if (e.PropertyName == nameof(IsFocused) || e.PropertyName == nameof(Text))
+            {
+                IsSuggestionsListOpen = !string.IsNullOrWhiteSpace(searchBar.Text) && searchBar.IsFocused;
+            }
+        }
+
+        private void ListView_OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            Text = (e.SelectedItem as IDisplayable)?.DisplayName ?? e.SelectedItem.ToString();
         }
     }
 }

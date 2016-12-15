@@ -61,6 +61,7 @@
     <Compile Include="Model\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\SearchHelper.cs" />
+    <Compile Include="Searchable\IDisplayable.cs" />
     <Compile Include="View\ResultView.xaml.cs">
       <DependentUpon>ResultView.xaml</DependentUpon>
     </Compile>
