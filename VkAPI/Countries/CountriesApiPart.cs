@@ -19,6 +19,9 @@ namespace VkAPI
 
             const string countriesMethod = "getCountries";
             const string needAllParam = "need_all=1";
+            
+            // Requesting max, I doubt that coutries count will change.
+            // It is for the sake of simplicity
             const string countParam = "count=1000";
 
             try

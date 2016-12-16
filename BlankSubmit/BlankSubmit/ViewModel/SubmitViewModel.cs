@@ -345,6 +345,7 @@ namespace BlankSubmit.ViewModel
 
         public void OnNavigatedTo(NavigationParameters parameters)
         {
+            // Load all countries on load seems fine
             AllCountries = NotifyTaskCompletion.Create(async () => (await VkApi.GetAllCountriesAsync())
                 .Select(x => new SearchableCountry(x))
                 .ToLookup(x => char.ToUpperInvariant(x.DisplayName[0])));

@@ -133,7 +133,7 @@
 
       </myControls:AutoCompleteBox>
 
-      <Button Text="Заполнить бланк" Command="{Binding SubmitCommand}" BackgroundColor="Silver"
+      <Button Text="Заполнить бланк" Command="{Binding SubmitCommand}" BackgroundColor="Silver" TextColor="Black"
               HorizontalOptions="FillAndExpand" BorderRadius="14" HeightRequest="65" Margin="20, 15, 20, 10"/>
     </StackLayout>
   </ScrollView>
