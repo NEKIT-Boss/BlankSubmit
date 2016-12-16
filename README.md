@@ -1,4 +1,4 @@
-Зкшы# BlankSubmit
+# BlankSubmit
 VK Api powered form submitting with cascading validation.
 
 #Основные решения
